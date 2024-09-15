@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV File Upload</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">CSV File Upload</h1>
+        <form method="post">
+            <div class="mb-3"></div>
+                <input type="file" name="file" class="form-control" id="csvFileInput" accept=".csv">
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped" id="csvTable">
+                <thead>
+                    <tr>
+                        <!-- Table headers will be inserted here -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('csvFileInput').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const contents = e.target.result;
+                const rows = contents.split('\n');
+                const table = document.getElementById('csvTable');
+                const thead = table.querySelector('thead');
+                const tbody = table.querySelector('tbody');
+
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+
+                if (rows.length > 0) {
+                    // Create table header
+                    const headerRow = document.createElement('tr');
+                    const headers = rows[0].split(',');
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+
+                    // Create table rows
+                    rows.slice(1).forEach(row => {
+                        const tr = document.createElement('tr');
+                        const cells = row.split(',');
+                        cells.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+
+</html>
